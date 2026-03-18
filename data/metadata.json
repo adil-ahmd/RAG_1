@@ -1,0 +1,68 @@
+{
+    "/Users/adilahamed/project_th/data/test_doc.pdf": {
+        "hash": "2aa462065fdc40b1e337db4f4f2794c5e8bef76411fd00114808690453b7c6d8"
+    },
+    "https://zatca.gov.sa/en/HelpCenter/guidelines/Documents/Simplified%20guide%20to%20the%20real%20estate%20transaction%20tax.pdf": {
+        "filepath": "/Users/adilahamed/project_th/data/20260224_123309_Simplified guide to the real estate transaction tax.pdf",
+        "etag": "\"{9C02A249-953B-4C7C-8DD1-BF6FDB9B5221},2\"",
+        "last_modified": "Fri, 03 May 2024 11:36:00 GMT",
+        "download_date": "20260224_123309"
+    },
+    "/Users/adilahamed/project_th/data/20260224_123309_Simplified guide to the real estate transaction tax.pdf": {
+        "hash": "1cad11222be1cb607bd2aae147f06a7a8c4107b77a4a301fc0e3d8cd9cd106be"
+    },
+    "https://zatca.gov.sa/en/HelpCenter/guidelines/Documents/Agents%20Guideline.pdf": {
+        "filepath": "/Users/adilahamed/project_th/data/20260224_123324_Agents Guideline.pdf",
+        "etag": "\"{A51B4DE9-8722-4447-BF68-1723E0CE2796},3\"",
+        "last_modified": "Thu, 23 Mar 2023 11:43:25 GMT",
+        "download_date": "20260224_123324"
+    },
+    "/Users/adilahamed/project_th/data/20260224_123324_Agents Guideline.pdf": {
+        "hash": "6c996bfdfb423a5ef59a0cce84bf73b492170922f3e9c11e7eb8ed661f1541b4"
+    },
+    "https://zatca.gov.sa/en/HelpCenter/guidelines/Documents/Business%20promotions.pdf": {
+        "filepath": "/Users/adilahamed/project_th/data/20260224_123335_Business promotions.pdf",
+        "etag": "\"{F4A25A3B-64E3-4192-8EF2-5E2AC6EB998A},3\"",
+        "last_modified": "Thu, 23 Mar 2023 11:42:00 GMT",
+        "download_date": "20260224_123335"
+    },
+    "/Users/adilahamed/project_th/data/20260224_123335_Business promotions.pdf": {
+        "hash": "723efa736840af61f862839721c363b0ff8208e7bfa00921ec80f7794727d3e1"
+    },
+    "https://zatca.gov.sa/en/HelpCenter/guidelines/Documents/Guideline%20for%20RETT%20(en).pdf": {
+        "filepath": "/Users/adilahamed/project_th/data/20260224_123352_Guideline for RETT (en).pdf",
+        "etag": "\"{3A791C75-542C-4B95-AF16-4D365C89E6A4},2\"",
+        "last_modified": "Fri, 03 May 2024 11:36:01 GMT",
+        "download_date": "20260224_123352"
+    },
+    "/Users/adilahamed/project_th/data/20260224_123352_Guideline for RETT (en).pdf": {
+        "hash": "2b0f5e47b4743047d2806197f0086a6e6938d917eeb85e6e37c7b8dd6f429ade"
+    },
+    "https://zatca.gov.sa/en/HelpCenter/guidelines/Documents/Economic%20Activity.pdf": {
+        "filepath": "/Users/adilahamed/project_th/data/20260224_123403_Economic Activity.pdf",
+        "etag": "\"{08433B08-FD99-4A93-A18C-82CA0BB36418},3\"",
+        "last_modified": "Thu, 16 Mar 2023 11:47:46 GMT",
+        "download_date": "20260224_123403"
+    },
+    "/Users/adilahamed/project_th/data/20260224_123403_Economic Activity.pdf": {
+        "hash": "dd7074b0d2745ff4e77d2a1ad12a3619ca55a47f539b7a4d3f5d01e585654edf"
+    },
+    "https://zatca.gov.sa/en/HelpCenter/guidelines/Documents/VAT-Guideline-for-Electronic-Contracts.pdf": {
+        "filepath": "/Users/adilahamed/project_th/data/20260224_123412_VAT-Guideline-for-Electronic-Contracts.pdf",
+        "etag": "\"{077BB88F-230D-4B21-B106-60ECBCBE0E65},2\"",
+        "last_modified": "Thu, 16 Mar 2023 11:46:24 GMT",
+        "download_date": "20260224_123412"
+    },
+    "/Users/adilahamed/project_th/data/20260224_123412_VAT-Guideline-for-Electronic-Contracts.pdf": {
+        "hash": "31c5c988c96fe5fc94b84f32eb8a17b380009b6d1cd163ce316f80e3352c8ef5"
+    },
+    "https://zatca.gov.sa/en/HelpCenter/guidelines/Documents/Selective%20Excise%20Tax%20Eng.pdf": {
+        "filepath": "/Users/adilahamed/project_th/data/20260224_123418_Selective Excise Tax Eng.pdf",
+        "etag": "\"{FDCDC655-1D06-4B88-973F-EC31A0C0FA7D},2\"",
+        "last_modified": "Thu, 23 Mar 2023 11:44:57 GMT",
+        "download_date": "20260224_123418"
+    },
+    "/Users/adilahamed/project_th/data/20260224_123418_Selective Excise Tax Eng.pdf": {
+        "hash": "d7ddc510622555fd70ee56c1bf40dbffef7ac5581ff82e3ec0e9dc009c982cdd"
+    }
+}
