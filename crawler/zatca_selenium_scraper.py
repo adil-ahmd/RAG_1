@@ -1,10 +1,7 @@
-# zatca_selenium_scraper.py
-
 import json
 import time
 import logging
 import os
-import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,7 +17,7 @@ START_URLS = [
     "https://zatca.gov.sa/en/HelpCenter/guidelines/Pages/default.aspx"
 ]
 
-MAX_PAGES = 10 # Safety limit
+MAX_PAGES = 30
 
 def create_driver():
     """
