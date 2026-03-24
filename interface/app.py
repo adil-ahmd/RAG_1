@@ -1,9 +1,13 @@
 import sys
 import os
+import warnings
+
+# Suppress Pydantic V1 / Python 3.14 deprecation warning coming from langchain_core
+warnings.filterwarnings("ignore", message=".*Core Pydantic V1 functionality isn't compatible with Python 3.14.*")
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
-import time
 from infrastructure.vector_index_manager import VectorIndexManager
 from application.query_service import QueryService
 from config import INDEX_DIR, LLM_MODEL, LLM_PROVIDER, EMBEDDING_MODEL
