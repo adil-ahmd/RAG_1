@@ -4,10 +4,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import logging
 import warnings
+
+# Suppress Pydantic V1 / Python 3.14 deprecation warning coming from langchain_core
+warnings.filterwarnings("ignore", message=".*Core Pydantic V1 functionality isn't compatible with Python 3.14.*")
 warnings.filterwarnings("ignore")
 
 from mcp.server.fastmcp import FastMCP, Context
-from config import INDEX_DIR, METADATA_FILE, LLM_PROVIDER, LLM_MODEL, EMBEDDING_MODEL
+from config import INDEX_DIR, LLM_PROVIDER, LLM_MODEL, EMBEDDING_MODEL
 
 SERVER_NAME = "ZATCA RAG"
 
@@ -26,7 +29,7 @@ def get_shared_index_manager():
         logger.info("Initializing index manager (first call)...")
         from infrastructure.vector_index_manager import VectorIndexManager
         shared_index_manager = VectorIndexManager(
-            index_dir=INDEX_DIR, 
+            index_dir=INDEX_DIR,
             embedding_model_name=EMBEDDING_MODEL
         )
         logger.info("Index manager ready.")
@@ -37,17 +40,17 @@ def get_query_service():
     global query_service_instance
     if query_service_instance:
         return query_service_instance
-    
+
     logger.info("Initializing query service (first call)...")
     index_manager = get_shared_index_manager()
     retriever = index_manager.get_retriever(
-    search_type="mmr",                      
-    search_kwargs={"k": 5, "fetch_k": 20}
-)
+        search_type="mmr",
+        search_kwargs={"k": 5, "fetch_k": 20}
+    )
     if not retriever:
         logger.error("No retriever available - index may be empty")
         return None
-        
+
     if LLM_PROVIDER == "gemini":
         import google.generativeai as genai
         genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
@@ -58,9 +61,8 @@ def get_query_service():
             convert_system_message_to_human=True
         )
     else:
-        from langchain_openai import ChatOpenAI
-        llm = ChatOpenAI(model=LLM_MODEL, temperature=0)
-        
+        raise ValueError(f"Unsupported LLM_PROVIDER: '{LLM_PROVIDER}'. Only 'gemini' is supported.")
+
     from application.query_service import QueryService
     query_service_instance = QueryService(retriever=retriever, llm=llm)
     logger.info("Query service ready.")
@@ -71,25 +73,26 @@ def get_ingestion_service():
     global ingestion_service_instance
     if ingestion_service_instance:
         return ingestion_service_instance
-    
+
     logger.info("Initializing ingestion service (first call)...")
     from infrastructure.loaders.pdf_loader import PDFLoader
     from infrastructure.chunking_engine import ChunkingEngine
     from domain.registry import DocumentRegistry
     from application.ingestion_service import IngestionService
-    
+    from config import METADATA_FILE
+
     try:
         from infrastructure.loaders.downloader import DocumentDownloader
         downloader = DocumentDownloader()
     except ImportError:
         logger.warning("DocumentDownloader not found, using None")
         downloader = None
-    
+
     loader = PDFLoader()
     chunker = ChunkingEngine()
     index_manager = get_shared_index_manager()
     registry = DocumentRegistry(storage_path=METADATA_FILE)
-    
+
     ingestion_service_instance = IngestionService(
         downloader=downloader,
         loader=loader,
@@ -104,10 +107,10 @@ def get_ingestion_service():
 def query_zatca_knowledge(query: str, ctx: Context = None) -> str:
     """
     Queries the ZATCA knowledge base.
-    
+
     ⚠️ IMPORTANT: First call takes 15-30 seconds to load the index.
     Subsequent calls are instant.
-    
+
     Returns the answer with source citations.
     """
     try:
@@ -116,31 +119,31 @@ def query_zatca_knowledge(query: str, ctx: Context = None) -> str:
             ctx.info(f"Query received: {query}")
             ctx.report_progress(1, 100)
             ctx.info("Initializing knowledge base... This may take up to 30 seconds on the first run.")
-            
+
         service = get_query_service()
-        
+
         if ctx:
             ctx.report_progress(50, 100)
-        
+
         if not service:
             return "Error: Knowledge base not loaded. Run check_for_updates first."
-            
+
         logger.info("Executing query...")
         if ctx:
             ctx.info("Executing query against LLM...")
             ctx.report_progress(75, 100)
-            
+
         result = service.ask(query, use_memory=False)
         answer = result['answer']
         sources = result['sources']
-        
+
         if ctx:
             ctx.report_progress(100, 100)
-            
+
         if sources:
             return f"Answer: {answer}\n\nSources:\n" + "\n".join(f"- {s}" for s in sources)
         return f"Answer: {answer}"
-        
+
     except Exception as e:
         logger.error(f"Query failed: {e}", exc_info=True)
         if ctx:
@@ -150,15 +153,15 @@ def query_zatca_knowledge(query: str, ctx: Context = None) -> str:
 @mcp.tool()
 def calculate_vat(amount: float, is_export: bool = False) -> str:
     """
-    Calculates the VAT for a given amount. 
+    Calculates the VAT for a given amount.
     Standard rate is 15%. Exports are 0%.
-    
+
     This is a pure calculation - no knowledge base needed.
     """
     rate = 0.0 if is_export else 0.15
     vat_amount = amount * rate
     total = amount + vat_amount
-    
+
     return (f"Base Amount: {amount:.2f} SAR\n"
             f"VAT Rate: {rate*100}%\n"
             f"VAT Amount: {vat_amount:.2f} SAR\n"
@@ -168,7 +171,7 @@ def calculate_vat(amount: float, is_export: bool = False) -> str:
 def run_crawler(ctx: Context = None) -> str:
     """
     Launches the ZATCA web crawler as a background process and returns immediately.
-    
+
     The crawler will run in the background and save results to zatca_documents.json.
     After it completes, call check_for_updates() to ingest the new documents.
     """
@@ -274,9 +277,6 @@ def check_for_updates(ctx: Context = None) -> str:
                     errors.append(f"{url}: {str(e)[:100]}")
                     logger.error(f"Failed to ingest {url}: {e}")
 
-        global query_service_instance
-        query_service_instance = None
-
         if ctx:
             ctx.report_progress(100, 100)
             ctx.info("Update complete.")
@@ -303,7 +303,7 @@ if __name__ == "__main__":
         logger.warning("To use: Configure in Claude Desktop settings")
         logger.warning("="*60)
         sys.exit(1)
-    
+
     logger.info("ZATCA RAG MCP Server starting...")
     logger.info("Tools will initialize on first use (lazy loading)")
     mcp.run()
