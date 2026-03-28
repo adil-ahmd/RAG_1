@@ -9,7 +9,21 @@ import warnings
 warnings.filterwarnings("ignore", message=".*Core Pydantic V1 functionality isn't compatible with Python 3.14.*")
 warnings.filterwarnings("ignore")
 
-from mcp.server.fastmcp import FastMCP, Context
+try:
+    from mcp.server.fastmcp import FastMCP, Context
+except ImportError:
+    class Context:
+        pass
+
+    class FastMCP:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def tool(self, *args, **kwargs):
+            def decorator(fn):
+                return fn
+            return decorator
+
 from config import INDEX_DIR, LLM_PROVIDER, LLM_MODEL, EMBEDDING_MODEL
 
 SERVER_NAME = "ZATCA RAG"
