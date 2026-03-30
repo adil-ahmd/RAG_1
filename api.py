@@ -1,8 +1,10 @@
 import os
-from typing import Optional
+import json
+from typing import Optional, Generator
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from interface.server import (
@@ -40,6 +42,31 @@ def query(request: QueryRequest):
 
     result = query_zatca_knowledge(request.query)
     return {"result": result}
+
+@app.post("/query/stream")
+def query_stream(request: QueryRequest):
+    """Stream the LLM response token-by-token using Server-Sent Events."""
+    if not request.query.strip():
+        raise HTTPException(status_code=400, detail="query is required")
+
+    from interface.server import get_query_service
+
+    def event_generator() -> Generator[str, None, None]:
+        service = get_query_service()
+        if not service:
+            yield "data: Error: Knowledge base not loaded.\n\n"
+            return
+        for chunk in service.ask_stream(request.query):
+            # Escape newlines so SSE frame stays intact
+            safe = chunk.replace("\n", "\\n")
+            yield f"data: {safe}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+    )
 
 @app.post("/vat")
 def vat(request: VATRequest):

@@ -16,21 +16,6 @@ services:
       - rag_zatca_network
     command: [ "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000", "--reload" ]
 
-  web:
-    image: zatca_rag:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    volumes:
-      - app-data:/app/data
-      - faiss-index:/app/faiss_index
-    ports:
-      - "8501:8501"
-    networks:
-      - rag_zatca_network
-    command: [ "streamlit", "run", "interface/app.py", "--server.port=8501", "--server.address=0.0.0.0" ]
 
 networks:
   rag_zatca_network:

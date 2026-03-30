@@ -8,7 +8,6 @@ langchain-text-splitters
 langchain-google-genai
 google-generativeai
 langchain-classic 
-streamlit
 pypdf
 faiss-cpu
 selenium

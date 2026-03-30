@@ -1,4 +1,5 @@
 import logging
+from typing import Generator
 from langchain_core.prompts import PromptTemplate
 from langchain_classic.chains.llm import LLMChain
 from langchain_classic.chains.combine_documents.stuff import StuffDocumentsChain
@@ -130,3 +131,52 @@ Detailed Answer:"""
                 "answer": f"Error querying knowledge base: {str(e)}",
                 "sources": []
             }
+
+    def ask_stream(self, question: str, use_memory: bool = False) -> Generator[str, None, None]:
+        """
+        Stream the LLM answer token-by-token.
+        Yields text chunks as they are produced by the LLM.
+        After the stream ends, yields a special JSON sentinel with sources.
+        """
+        import json
+        try:
+            formatted_history = self._format_history() if use_memory else ""
+
+            # Retrieve relevant documents
+            docs = self.retriever.invoke(question)
+
+            # Build the context string (same as StuffDocumentsChain does)
+            context = "\n\n".join(doc.page_content for doc in docs)
+
+            # Format the prompt manually so we can call llm.stream()
+            prompt = self.combine_docs_chain.llm_chain.prompt
+            formatted_prompt = prompt.format(
+                context=context,
+                chat_history=formatted_history,
+                question=question
+            )
+
+            # Stream tokens from the LLM
+            for chunk in self.llm.stream(formatted_prompt):
+                token = chunk.content if hasattr(chunk, "content") else str(chunk)
+                if token:
+                    yield token
+
+            # Deduplicate sources
+            sources = []
+            seen = set()
+            for doc in docs:
+                src = doc.metadata.get('source', 'Unknown')
+                if src not in seen:
+                    sources.append(src)
+                    seen.add(src)
+
+            if use_memory:
+                self._update_history(question)
+
+            # Send sources as a final sentinel event
+            yield f"\n\n__SOURCES__:{json.dumps(sources)}"
+
+        except Exception as e:
+            logger.error(f"Streaming query failed: {e}")
+            yield f"Error: {str(e)}"
