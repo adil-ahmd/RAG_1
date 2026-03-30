@@ -35,8 +35,9 @@ class VectorIndexManager:
 
     def _load_index(self):
         """Load FAISS index from disk"""
-        if not os.path.exists(self.index_dir):
-            logger.warning(f"Index not found at {self.index_dir}. Will create new one.")
+        faiss_file = os.path.join(self.index_dir, "index.faiss")
+        if not os.path.exists(faiss_file):
+            logger.warning(f"Index file not found at {faiss_file}. Will create new one.")
             return None
             
         logger.info(f"Loading FAISS index from {self.index_dir}...")

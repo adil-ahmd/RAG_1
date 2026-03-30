@@ -5,9 +5,13 @@ langchain-community
 langchain-core
 langchain-huggingface
 langchain-text-splitters
+langchain-google-genai
+google-generativeai
+langchain-classic 
 streamlit
 pypdf
 faiss-cpu
 selenium
 requests
 python-dotenv
+sentence-transformers
